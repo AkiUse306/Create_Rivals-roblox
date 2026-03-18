@@ -41,6 +41,6 @@ end)
 UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.R then
-        print("(Client) Reload action placeholder")
+        print("Reloading weapon...")
     end
 end)

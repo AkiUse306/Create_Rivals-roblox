@@ -1,46 +1,92 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local ui = player:WaitForChild("PlayerGui"):WaitForChild("MainUI")
+local gui = player:WaitForChild("PlayerGui"):WaitForChild("MainUI")
 
-local BuyItemRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("BuyItem")
-local OpenEggRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("OpenEgg")
+local BuyItem = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("BuyItem")
+local EquipWeapon = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("EquipWeapon")
+local OpenEgg = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("OpenEgg")
+local TeleportToArena = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TeleportToArena")
+local TeleportToHub = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TeleportToHub")
 
 local MainUI = {}
 
-function MainUI:Init()
-    local shop = ui:FindFirstChild("ShopFrame")
-    local openEgg = ui:FindFirstChild("EggOpeningUI")
-    if shop then
-        local buyButton = shop:FindFirstChild("BuyWeaponButton")
-        if buyButton then
-            buyButton.MouseButton1Click:Connect(function()
-                BuyItemRemote:FireServer("Primary", "Pistol")
-            end)
-        end
+local function popup(msg)
+    local pop = gui:FindFirstChild("Popup")
+    if pop then
+        pop.Text = msg
+        pop.Visible = true
+        delay(2, function()
+            pop.Visible = false
+        end)
     end
-    if openEgg then
-        local rollButton = openEgg:FindFirstChild("RollButton")
-        if rollButton then
-            rollButton.MouseButton1Click:Connect(function()
-                OpenEggRemote:FireServer()
-            end)
+end
+
+local function updateStats(aklas, equipped)
+    local ak = gui:FindFirstChild("StatusPanel") and gui.StatusPanel:FindFirstChild("AklasLabel")
+    local eq = gui:FindFirstChild("StatusPanel") and gui.StatusPanel:FindFirstChild("EquippedLabel")
+    if ak then ak.Text = "Aklas: " .. tostring(aklas or 0) end
+    if eq and equipped then eq.Text = "Equipped: " .. equipped end
+end
+
+function MainUI:Init()
+    local shop = gui:FindFirstChild("ShopFrame")
+    if shop then
+        for _, obj in ipairs(shop:GetChildren()) do
+            if obj:IsA("TextButton") and obj.Name:match("Button$") then
+                obj.MouseButton1Click:Connect(function()
+                    local item = obj:GetAttribute("Name")
+                    BuyItem:FireServer("Primary", item)
+                end)
+            end
         end
     end
 
-    OpenEggRemote.OnClientEvent:Connect(function(petName, rank)
-        warn("Egg result:", petName, rank)
+    local rollBtn = gui:FindFirstChild("EggOpeningUI") and gui.EggOpeningUI:FindFirstChild("RollButton")
+    if rollBtn then
+        rollBtn.MouseButton1Click:Connect(function()
+            OpenEgg:FireServer()
+        end)
+    end
+
+    local arenaBtn = gui:FindFirstChild("NavPanel") and gui.NavPanel:FindFirstChild("ArenaButton")
+    local hubBtn = gui:FindFirstChild("NavPanel") and gui.NavPanel:FindFirstChild("HubButton")
+    if arenaBtn then
+        arenaBtn.MouseButton1Click:Connect(function()
+            TeleportToArena:FireServer()
+        end)
+    end
+    if hubBtn then
+        hubBtn.MouseButton1Click:Connect(function()
+            TeleportToHub:FireServer()
+        end)
+    end
+
+    BuyItem.OnClientEvent:Connect(function(success, result)
+        if success then
+            popup("Bought " .. tostring(result) .. "!")
+            updateStats(nil, tostring(result))
+        else
+            popup("Buy failed: " .. tostring(result))
+        end
     end)
 
-    BuyItemRemote.OnClientEvent:Connect(function(success, msg)
+    EquipWeapon.OnClientEvent:Connect(function(success, result)
         if success then
-            warn("Bought item:", msg)
+            popup("Equipped " .. tostring(result))
+            updateStats(nil, tostring(result))
         else
-            warn("Buy failed:", msg)
+            popup("Equip failed: " .. tostring(result))
+        end
+    end)
+
+    OpenEgg.OnClientEvent:Connect(function(success, petName, rank)
+        if success then
+            popup("New pet: " .. tostring(petName) .. " (" .. rank .. ")")
+        else
+            popup("Egg failed: " .. tostring(petName))
         end
     end)
 end
 
 MainUI:Init()
-
-return MainUI
