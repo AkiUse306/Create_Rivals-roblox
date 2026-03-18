@@ -219,6 +219,16 @@ Aklas system
 
 ✅ Phase 2
 
+13. 🧠 External Core (C# Backend Integration)
+
+For powerful external logic like matchmaking, analytics, or global state, run the backend server in `backend/`:
+- `dotnet run` from `backend`
+- Calls are available at `http://localhost:5000`
+- Roblox uses `HttpService` from server scripts to talk to the backend (see `RobloxProject/ServerScriptService/ExternalCoreIntegration.lua`).
+
+This gives you a robust external core (closer to Unreal-like server architecture) while keeping game logic in Roblox client/server.
+
+
 Shop UI
 
 Inventory
