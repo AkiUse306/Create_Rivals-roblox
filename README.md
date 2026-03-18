@@ -1,3 +1,5 @@
+# Game Documentation
+
 1. 📌 Core Game Loop (Refined)
 
 The game is built around a high-retention loop:
@@ -260,3 +262,20 @@ Scalable systems (modules)
 Anti-exploit built-in
 
 Clean Roblox Studio workflow
+
+## Roblox Project Scaffold
+The `RobloxProject` folder contains a folder-structured script scaffold for your game:
+- `ReplicatedStorage/Modules` for shared systems
+- `ReplicatedStorage/Remotes` for remote event names
+- `ServerScriptService` for backend handlers and anti-cheat
+- `StarterPlayer/StarterPlayerScripts` for client UI, input, and effects
+- `StarterGui/MainUI` placeholder for UI elements
+
+### Next steps
+1. Open Roblox Studio
+2. Create the `ReplicatedStorage`, `ServerScriptService`, `StarterPlayerScripts`, and GUI structure exactly
+3. Copy each Lua file into the corresponding script/module in Roblox Studio
+4. Add RemoteEvents in ReplicatedStorage: `DealDamage`, `BuyItem`, `OpenEgg`, `EquipWeapon`
+5. Wire up UI buttons to `BuyItem` and `OpenEgg` remotes
+6. Set up TeleportService place IDs in `GameManager.lua`
+7. Publish and test in a two-place experience (Hub and Arena)

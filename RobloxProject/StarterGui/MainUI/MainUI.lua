@@ -1,0 +1,2 @@
+-- MainUI hierarchy placeholder
+-- Frames: ShopFrame, InventoryFrame, PetFrame, StatsFrame, EggOpeningUI
