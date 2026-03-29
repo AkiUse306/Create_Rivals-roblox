@@ -24,5 +24,12 @@ namespace RivalBackend.Controllers {
             var stat = _stats.AddScore(id, update.Add);
             return Ok(stat);
         }
+
+        [HttpPost("{id}/stats")]
+        public IActionResult UpdateStats(string id, [FromBody] PlayerStatsUpdate update) {
+            if (update == null) return BadRequest(new { error = "Missing stats payload" });
+            var stat = _stats.UpdateStats(id, update);
+            return Ok(stat);
+        }
     }
 }

@@ -1,5 +1,7 @@
 using RivalBackend.Models;
 
+using RivalBackend.Models;
+
 namespace RivalBackend.Services {
     public class PlayerStatsService {
         private readonly Dictionary<string, PlayerStats> _store = new();
@@ -16,6 +18,22 @@ namespace RivalBackend.Services {
             var stat = GetOrCreate(playerId);
             stat.Score += add;
             stat.Level = Math.Max(1, stat.Score / 100 + 1);
+            return stat;
+        }
+
+        public PlayerStats UpdateStats(string playerId, PlayerStatsUpdate update) {
+            var stat = GetOrCreate(playerId);
+            if (update == null) return stat;
+
+            if (update.Score.HasValue) {
+                stat.Score = update.Score.Value;
+                stat.Level = Math.Max(1, stat.Score / 100 + 1);
+            }
+
+            if (update.Level.HasValue) {
+                stat.Level = Math.Max(1, update.Level.Value);
+            }
+
             return stat;
         }
     }

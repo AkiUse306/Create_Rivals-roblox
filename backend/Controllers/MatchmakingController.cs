@@ -20,5 +20,10 @@ namespace RivalBackend.Controllers {
             var result = _mm.Matchmake(req);
             return Ok(new { matchId = result.MatchId, queue = result.Queue });
         }
+
+        [HttpGet("queue")]
+        public IActionResult GetQueue() {
+            return Ok(new { queue = _mm.GetQueue() });
+        }
     }
 }
