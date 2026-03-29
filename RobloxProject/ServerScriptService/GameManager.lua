@@ -1,14 +1,22 @@
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
+local Config = require(script.GameManagerConfig)
 
 local GameManager = {
-    HubPlaceId = 0,
-    ArenaPlaceId = 0,
+    HubPlaceId = Config.HubPlaceId,
+    ArenaPlaceId = Config.ArenaPlaceId,
 }
 
 function GameManager:SetPlaceIds(hubPlaceId, arenaPlaceId)
-    self.HubPlaceId = hubPlaceId
-    self.ArenaPlaceId = arenaPlaceId
+    self.HubPlaceId = hubPlaceId or self.HubPlaceId
+    self.ArenaPlaceId = arenaPlaceId or self.ArenaPlaceId
+    Config:SetPlaceIds(self.HubPlaceId, self.ArenaPlaceId)
+end
+
+function GameManager:LoadFromConfig()
+    local hub, arena = Config:GetPlaceIds()
+    self.HubPlaceId = hub
+    self.ArenaPlaceId = arena
 end
 
 function GameManager:TeleportToArena(player)

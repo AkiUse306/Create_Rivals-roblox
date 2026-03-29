@@ -8,7 +8,7 @@ function RemoteInit:CreateRemotes()
         remotes.Name = "Remotes"
         remotes.Parent = ReplicatedStorage
     end
-    local names = {"DealDamage", "BuyItem", "OpenEgg", "EquipWeapon", "TeleportToArena", "TeleportToHub"}
+    local names = {"DealDamage", "BuyItem", "OpenEgg", "EquipWeapon", "TeleportToArena", "TeleportToHub", "PlayerDataUpdated"}
     for _, name in ipairs(names) do
         if not remotes:FindFirstChild(name) then
             local evt = Instance.new("RemoteEvent")

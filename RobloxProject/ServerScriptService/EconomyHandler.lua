@@ -5,6 +5,7 @@ local WeaponConfig = require(ReplicatedStorage.Modules.WeaponConfig)
 local EconomySystem = require(ReplicatedStorage.Modules.EconomySystem)
 
 local EconomyHandler = {}
+local DataManager = require(script.Parent.DataManager)
 
 BuyItem.OnServerEvent:Connect(function(player, category, weaponName)
     local configCategory = WeaponConfig[category]
@@ -23,6 +24,7 @@ BuyItem.OnServerEvent:Connect(function(player, category, weaponName)
         if not player.Data.Weapons then player.Data.Weapons = {} end
         table.insert(player.Data.Weapons, weaponName)
         BuyItem:FireClient(player, true, weaponName)
+        DataManager:EmitPlayerDataUpdate(player)
     else
         BuyItem:FireClient(player, false, "insufficient aklas")
     end
@@ -34,6 +36,7 @@ EquipWeapon.OnServerEvent:Connect(function(player, weaponName)
         if w == weaponName then
             player.Data.EquippedWeapon = weaponName
             EquipWeapon:FireClient(player, true, weaponName)
+            DataManager:EmitPlayerDataUpdate(player)
             return
         end
     end

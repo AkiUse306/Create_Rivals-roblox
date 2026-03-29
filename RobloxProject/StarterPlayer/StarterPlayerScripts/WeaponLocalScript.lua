@@ -1,25 +1,34 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
+local camera = workspace.CurrentCamera
 local DealDamageRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("DealDamage")
 
-local function fireWeapon(damage)
-    local target = mouse.Target
-    if target and target.Parent and target.Parent:FindFirstChild("Humanoid") then
-        DealDamageRemote:FireServer(damage, target.Parent)
-    end
-end
+local lastFireTime = 0
 
 local function onToolActivated(tool)
-    local data = player and player:FindFirstChild("Data") and player.Data
-    local damage = 20
-    if data and data.Multipliers then
-        damage = damage * data.Multipliers.Damage
+    local now = tick()
+    local fireRate = now - lastFireTime
+    lastFireTime = now
+
+    local weaponName = "Pistol"
+    if player.Data and player.Data.EquippedWeapon then
+        weaponName = player.Data.EquippedWeapon
+    elseif tool and tool.Name then
+        weaponName = tool.Name
     end
-    fireWeapon(damage)
+
+    local origin = camera and camera.CFrame.Position
+    local targetPosition = mouse.Hit and mouse.Hit.p
+    if not origin or not targetPosition then
+        return
+    end
+
+    DealDamageRemote:FireServer(weaponName, origin, targetPosition, fireRate)
 end
 
 local function setupTool(tool)
@@ -30,12 +39,20 @@ local function setupTool(tool)
     end
 end
 
-player.CharacterAdded:Connect(function(character)
+local function connectTools()
     local backpack = player:WaitForChild("Backpack")
     for _, tool in ipairs(backpack:GetChildren()) do
         setupTool(tool)
     end
     backpack.ChildAdded:Connect(setupTool)
+end
+
+if player.Character then
+    connectTools()
+end
+
+player.CharacterAdded:Connect(function()
+    connectTools()
 end)
 
 UserInputService.InputBegan:Connect(function(input, processed)
@@ -44,3 +61,11 @@ UserInputService.InputBegan:Connect(function(input, processed)
         print("Reloading weapon...")
     end
 end)
+
+-- Ensure player data is always a table (client-side fallback for local effects)
+RunService.Heartbeat:Connect(function()
+    if not player.Data then
+        player.Data = player.Data or {Multipliers = {Damage = 1, Money = 1}}
+    end
+end)
+

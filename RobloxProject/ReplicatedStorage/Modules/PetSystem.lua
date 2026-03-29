@@ -10,14 +10,16 @@ PetSystem.PetsByRank = {
 }
 
 function PetSystem:RollEgg(player)
+    if not player or not player.Data then
+        return nil
+    end
+
     local rank = RNGSystem:RollRank()
     local list = self.PetsByRank[rank]
     local petName = list[math.random(1, #list)]
 
-    if not player:FindFirstChild("Data") then
-        return nil
-    end
     local data = player.Data
+    data.Pets = data.Pets or {}
     table.insert(data.Pets, {Name = petName, Rank = rank, CreatedAt = os.time()})
     return petName, rank
 end

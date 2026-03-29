@@ -10,6 +10,7 @@ local TeleportToArena = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("
 local TeleportToHub = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TeleportToHub")
 
 local MainUI = {}
+local RunService = game:GetService("RunService")
 
 local function popup(msg)
     local pop = gui:FindFirstChild("Popup")
@@ -26,8 +27,17 @@ local function updateStats(aklas, equipped)
     local ak = gui:FindFirstChild("StatusPanel") and gui.StatusPanel:FindFirstChild("AklasLabel")
     local eq = gui:FindFirstChild("StatusPanel") and gui.StatusPanel:FindFirstChild("EquippedLabel")
     if ak then ak.Text = "Aklas: " .. tostring(aklas or 0) end
-    if eq and equipped then eq.Text = "Equipped: " .. equipped end
+    if eq then eq.Text = "Equipped: " .. tostring(equipped or "None") end
 end
+
+-- Keep local UI in sync with server data updates
+local PlayerDataUpdated = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("PlayerDataUpdated")
+PlayerDataUpdated.OnClientEvent:Connect(function(data)
+    if data then
+        updateStats(data.Aklas, data.EquippedWeapon)
+    end
+end)
+
 
 function MainUI:Init()
     local shop = gui:FindFirstChild("ShopFrame")
