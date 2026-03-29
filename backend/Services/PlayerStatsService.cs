@@ -1,7 +1,5 @@
 using RivalBackend.Models;
 
-using RivalBackend.Models;
-
 namespace RivalBackend.Services {
     public class PlayerStatsService {
         private readonly Dictionary<string, PlayerStats> _store = new();
