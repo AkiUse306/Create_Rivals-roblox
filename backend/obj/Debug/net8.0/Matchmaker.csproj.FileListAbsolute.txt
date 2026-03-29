@@ -26,3 +26,4 @@
 /workspaces/rg-Create_Rivals/backend/obj/Debug/net8.0/Matchmaker.genruntimeconfig.cache
 /workspaces/rg-Create_Rivals/backend/obj/Debug/net8.0/ref/Matchmaker.dll
 /workspaces/rg-Create_Rivals/backend/bin/Debug/net8.0/node/package.json
+/workspaces/rg-Create_Rivals/backend/bin/Debug/net8.0/node/package-lock.json
